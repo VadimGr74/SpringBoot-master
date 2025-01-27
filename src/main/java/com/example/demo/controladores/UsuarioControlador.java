@@ -7,47 +7,58 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.repositorios.UsuarioRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioControlador {
 
+    private final UsuarioRepository repositorioUsuarios;
+
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    public UsuarioControlador(UsuarioRepository repositorioUsuarios) {
+        this.repositorioUsuarios = repositorioUsuarios;
+    }
 
+    // GET all usuarios - SELECT *
     @GetMapping
-    public List<Usuario> getAllUsuarios() {
-        return usuarioRepository.findAll();
+    public ResponseEntity<List<Usuario>> getUsuarios() {
+        List<Usuario> lista = repositorioUsuarios.findAll();
+        return ResponseEntity.ok(lista);
     }
 
+    // GET usuario by ID - SELECT * WHERE ID = ?
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Integer id) {
-        return usuarioRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Usuario> getUsuario(@PathVariable int id) {
+        Optional<Usuario> usuario = repositorioUsuarios.findById(id);
+        return usuario.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // POST new usuario - INSERT
     @PostMapping
-    public Usuario createUsuario(@RequestBody Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario) {
+        Usuario usuarioPersistido = repositorioUsuarios.save(usuario);
+        return ResponseEntity.status(201).body(usuarioPersistido);
     }
 
+    // PUT update usuario - UPDATE WHERE ID = ?
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@PathVariable Integer id, @RequestBody Usuario usuario) {
-        return usuarioRepository.findById(id)
-                .map(existing -> {
-                    usuario.setId(existing.getId());
-                    return ResponseEntity.ok(usuarioRepository.save(usuario));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Usuario> updateUsuario(@RequestBody Usuario usuario, @PathVariable int id) {
+        if (!repositorioUsuarios.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        usuario.setId(id);  // Asegurarse de que el ID no se modifique
+        Usuario usuarioActualizado = repositorioUsuarios.save(usuario);
+        return ResponseEntity.ok(usuarioActualizado);
     }
 
+    // DELETE usuario - DELETE WHERE ID = ?
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUsuario(@PathVariable Integer id) {
-        if (usuarioRepository.existsById(id)) {
-            usuarioRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteUsuario(@PathVariable int id) {
+        if (!repositorioUsuarios.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        repositorioUsuarios.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
