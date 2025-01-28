@@ -1,7 +1,10 @@
 package com.example.demo.controladores;
 
 import com.example.demo.modelos.Usuario;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.repositorios.UsuarioRepository;
@@ -21,11 +24,11 @@ public class UsuarioControlador {
     }
 
     // GET all usuarios - SELECT *
-    @GetMapping
-    public ResponseEntity<List<Usuario>> getUsuarios() {
-        List<Usuario> lista = repositorioUsuarios.findAll();
-        return ResponseEntity.ok(lista);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<Usuario>> getUsuarios() {
+//        List<Usuario> lista = repositorioUsuarios.findAll();
+//        return ResponseEntity.ok(lista);
+//    }
 
     // GET usuario by ID - SELECT * WHERE ID = ?
     @GetMapping("/{id}")
@@ -35,20 +38,35 @@ public class UsuarioControlador {
     }
 
     // POST new usuario - INSERT
-    @PostMapping
-    public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario) {
-        Usuario usuarioPersistido = repositorioUsuarios.save(usuario);
-        return ResponseEntity.status(201).body(usuarioPersistido);
-    }
+  @Transactional
+  @PostMapping
+  public ResponseEntity<Usuario> crearUsuario(@Valid @RequestBody Usuario usuario) {
+      // Validación adicional si es necesario
+      if (usuario == null) {
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+
+      // Guardar el nuevo usuario
+      Usuario usuarioCreado = repositorioUsuarios.save(usuario);
+
+      // Retornar el usuario creado con un status 201 (Created)
+      return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCreado);
+  }
 
     // PUT update usuario - UPDATE WHERE ID = ?
+    @Transactional //evitar que varias transacciones crean deadlock
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@RequestBody Usuario usuario, @PathVariable int id) {
-        if (!repositorioUsuarios.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        usuario.setId(id);  // Asegurarse de que el ID no se modifique
-        Usuario usuarioActualizado = repositorioUsuarios.save(usuario);
+    public ResponseEntity<?> updateUsuario(@RequestBody Usuario usuario, @PathVariable int id) {
+        Usuario usuarioExistente = repositorioUsuarios.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuarioExistente.setNombre(usuario.getNombre());
+        usuarioExistente.setEmail(usuario.getEmail());
+        usuarioExistente.setPassword(usuario.getPassword());
+        usuarioExistente.setPenalizacionHasta(usuario.getPenalizacionHasta());
+        usuarioExistente.setTipo(usuario.getTipo());
+
+        Usuario usuarioActualizado = repositorioUsuarios.saveAndFlush(usuarioExistente);
         return ResponseEntity.ok(usuarioActualizado);
     }
 

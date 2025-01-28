@@ -39,13 +39,13 @@ public class Ejemplar {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EstadoEjemplar estado = EstadoEjemplar.DISPONIBLE;
+    private EstadoEjemplar estado = EstadoEjemplar.Disponible;
 
     // Getters y Setters
 
     public enum EstadoEjemplar {
-        DISPONIBLE,
-        PRESTADO,
-        DAÑADO
+        Disponible,
+        Prestado,
+        Dañado
     }
 }

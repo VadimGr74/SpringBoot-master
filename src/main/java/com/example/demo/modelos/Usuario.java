@@ -86,7 +86,7 @@ public class Usuario {
 // Getters y Setters
 
     public enum TipoUsuario {
-        NORMAL,
-        ADMINISTRADOR
+        normal,
+        administrador
     }
 }
