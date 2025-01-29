@@ -41,7 +41,7 @@ public class UsuarioControlador {
   @Transactional
   @PostMapping
   public ResponseEntity<Usuario> crearUsuario(@Valid @RequestBody Usuario usuario) {
-      // Validación adicional si es necesario
+      // Validación por si el user es null
       if (usuario == null) {
           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
       }
@@ -50,7 +50,7 @@ public class UsuarioControlador {
       Usuario usuarioCreado = repositorioUsuarios.save(usuario);
 
       // Retornar el usuario creado con un status 201 (Created)
-      return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCreado);
+      return ResponseEntity.status(201).body(usuarioCreado);
   }
 
     // PUT update usuario - UPDATE WHERE ID = ?

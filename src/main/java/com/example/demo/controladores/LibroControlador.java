@@ -21,11 +21,11 @@ public class LibroControlador{
     }
 
     // GET all books - SELECT *
-    @GetMapping
-    public ResponseEntity<List<Libro>> getLibros() {
-        List<Libro> lista = repositorioLibros.findAll();
-        return ResponseEntity.ok(lista);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<Libro>> getLibros() {
+//        List<Libro> lista = repositorioLibros.findAll();
+//        return ResponseEntity.ok(lista);
+//    }
 
     // GET book by ISBN - SELECT * WHERE ISBN = ?
     @GetMapping("/{isbn}")
