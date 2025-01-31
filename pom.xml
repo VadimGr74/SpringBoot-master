@@ -87,6 +87,10 @@
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <!-- Validación -->
         <!-- Para responder en XML  -->
         <!-- https://howtodoinjava.com/spring-boot/xml-request-response-body/-->
