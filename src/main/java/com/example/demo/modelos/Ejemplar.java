@@ -10,7 +10,7 @@ import lombok.Data;
 public class Ejemplar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @NotBlank(message = "El estado no puede estar vacío")
     @Pattern(regexp = "disponible|prestado|dañado", message = "El estado debe ser 'disponible', 'prestado' o 'dañado'")
