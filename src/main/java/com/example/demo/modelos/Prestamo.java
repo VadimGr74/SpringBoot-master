@@ -5,7 +5,9 @@ import java.time.LocalDate;
 
 @Entity
 public class Prestamo {
+    public Prestamo() {
 
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
