@@ -1,94 +1,40 @@
 package com.example.demo.modelos;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
 
+@Data
 @Entity
 public class Usuario {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(nullable = false, unique = true, length = 15)
+    @NotBlank(message = "El DNI no puede estar vacío")
+    @Pattern(regexp = "^[0-9]{8}[A-Za-z]$", message = "Formato de DNI inválido")
     private String dni;
 
-    @Column(nullable = false, length = 100)
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @Size(max = 255, message = "El nombre no puede tener más de 255 caracteres")
     private String nombre;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @NotBlank(message = "El tipo no puede estar vacío")
+    @Pattern(regexp = "normal|administrador", message = "El tipo debe ser 'normal' o 'administrador'")
+    private String tipo;
+
+    @NotBlank(message = "El email no puede estar vacío")
+    @Email(regexp = ".+@gmail\\.com", message = "El email debe ser de Gmail")
     private String email;
 
-    @Column(nullable = false)
+    @NotBlank(message = "La contraseña no puede estar vacía")
+    @Size(min = 4, max = 12, message = "La contraseña debe tener entre 4 y 12 caracteres")
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoUsuario tipo;
-
     private LocalDate penalizacionHasta;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getDni() {
-        return dni;
-    }
-
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public TipoUsuario getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoUsuario tipo) {
-        this.tipo = tipo;
-    }
-
-    public LocalDate getPenalizacionHasta() {
-        return penalizacionHasta;
-    }
-
-    public void setPenalizacionHasta(LocalDate penalizacionHasta) {
-        this.penalizacionHasta = penalizacionHasta;
-    }
-// Getters y Setters
-
-    public enum TipoUsuario {
-        normal,
-        administrador
-    }
 }

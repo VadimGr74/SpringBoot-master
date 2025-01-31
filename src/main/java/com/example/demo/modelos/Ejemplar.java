@@ -1,51 +1,22 @@
 package com.example.demo.modelos;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 
+@Data
 @Entity
 public class Ejemplar {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    public Integer getId() {
-        return id;
-    }
+    @NotBlank(message = "El estado no puede estar vacío")
+    @Pattern(regexp = "disponible|prestado|dañado", message = "El estado debe ser 'disponible', 'prestado' o 'dañado'")
+    private String estado;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Libro getLibro() {
-        return libro;
-    }
-
-    public void setLibro(Libro libro) {
-        this.libro = libro;
-    }
-
-    public EstadoEjemplar getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoEjemplar estado) {
-        this.estado = estado;
-    }
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "isbn", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "libro_id", nullable = false)
     private Libro libro;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private EstadoEjemplar estado = EstadoEjemplar.Disponible;
-
-    // Getters y Setters
-
-    public enum EstadoEjemplar {
-        Disponible,
-        Prestado,
-        Dañado
-    }
 }
